@@ -16,19 +16,34 @@ const database = JSON.parse(data)
 // console.log(data)
 
 const obj = {
-    message: 'hello from server'
+    message: 'Success'
 }
 
 app.post('/login', (request, response) => {
-    console.log(request.fields)
-    response.json(obj)
+    for (let item of database.users) {
+        if (request.fields.username == item.username) {
+            console.log(request.fields)
+            response.json(obj)
+        } else {
+            console.log('лох вонючий')
+        }
+    }
 })
 
-app.post('/register', (request, response) => {
-    console.log(request.fields)
-    database.users.push(request.fields)
+let error = {
+    message: 'Лох вонючий'
+}
 
-    fs.writeFileSync('usersDB.json', JSON.stringify(database, null, 2))
+app.post('/register', (request, response) => {
+    for (let item of database.users) {
+        console.log(item.username);
+        if (request.fields.username !== item.username) {
+            console.log(request.fields)
+            database.users.push(request.fields)
+            fs.writeFileSync('usersDB.json', JSON.stringify(database, null, 2))
+            break
+        } 
+    }
 })
 
 app.listen(8080, () => {
